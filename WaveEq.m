@@ -3,7 +3,7 @@
 % what are we solving? the wave equation u_tt = delta*u, with 0-D BC and initial conditions
 
 % first we do the laplacian
-n = 120; dx = 1/n;
+n = 1024; dx = 1/n;
 x = linspace(0,1,n+1)'; xs = x(2:end-1); % full and interior pts in interval 
 [YS,XS] = meshgrid(xs,xs); % grid of interior points
 
@@ -29,8 +29,8 @@ g = @(x,y) zeros(size(x)); % vel
 w0 = [reshape(f(XS,YS), (n-1)^2,1); reshape(g(XS,YS), (n-1)^2,1)]; % initial conditions
 
 % time span
-tf = 1;
-m = 20;
+tf = 4;
+m = 1;
 t = linspace(0,tf,m+1);
 
 % solve the ODE system
@@ -46,7 +46,7 @@ for i=1:length(t)
   % reshaping the solution so we get u
   z(2:end-1,2:end-1) = reshape(w(i,1:(n-1)^2), n-1, n-1);
   % plotting the fig
-  figure(1);
+  figure('Visible','on','Name','gif');
   colormap(jet); % shading interp;
   surf(x,x,z,'edgecolor','none'); 
   % keeping the z axis fixed so it's less confusing
@@ -55,6 +55,7 @@ for i=1:length(t)
   % title(sym(strcat('Solving U_tt =', num2str(t(i))))); 
   title(titleVar)
   clim([-1,1]);
+  view(42,-42);
 
   % saving to the video
   % frame = getframe(gcf);
