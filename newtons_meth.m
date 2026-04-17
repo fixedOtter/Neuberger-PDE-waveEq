@@ -36,17 +36,3 @@ Z = zeros(n+1);
 Z(2:end-1,2:end-1) = u;
 [X,Y] = meshgrid(x,x);
 surf(X,Y,Z,'edgecolor','none');
-
-
-% next I want to do: 
-F = @(s,u) L*u + s*u + u.^3; % actual funct with s to move along the solutions
-J = @(s,u) L + spdiags(s + 3*u.^2, 0, (n-1)^2, (n-1)^2); % jacobian with s
-
-% do again with s & see if we can loop over the solutions to plot a grid
-for s = 0:ds:2*pi^2
-  chi = J(s,u)\F(s,u); % next newton step
-  u = u - chi; % update
-  if (norm(chi) < 1e-6) % stopping condition
-    break
-  end
-end
