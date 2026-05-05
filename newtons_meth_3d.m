@@ -96,17 +96,35 @@ figure
 surf(X(:,:,n_half),Y(:,:,n_half),Sol_3d(:,:,n_half),'edgecolor','none'); % plotting the slice of the solution
 title('Slice of the solution at z = 0.5')
 % zlim([0 10E-34])
-view(42,-42);
+view(42,42);
 
 scatX = reshape(X, [],1,1);
 scatY = reshape(Y, [],1,1);
 scatZ = reshape(Z, [],1,1);
 scatSol_3d = reshape(Sol_3d, [],1,1);
+scatSize = ones(length(scatZ),1)*200*dx;
+scatColor = zeros(length(scatSol_3d),3);
+
+% convert scatSol_3d to rbg value depending on magnitude of each element
+scatSolNorm = (scatSol_3d - min(scatSol_3d)) / (max(scatSol_3d) - min(scatSol_3d));
+cmap = colormap("turbo");
+scatSize = scatSize + scatSolNorm*200;
+
+% loop through the normalized solution and plot color
+for idx = 1:length(scatSol_3d)
+  scatColor(idx, :) = cmap(round(scatSolNorm(idx) * (size(cmap, 1) - 1) + 1), :);
+end
 
 % scatter3d figure
 figure
-scatter3(scatX,scatY,scatZ)
-colormap(gca,"parula")
+% in order to dynamically change the point plot
+scat = scatter3(scatX,scatY,scatZ,scatSize,scatColor,"filled");
+% making face data something I can manipulate
+scat.MarkerFaceAlpha = "flat";
+% keeps the points that are at 0
+% scat.AlphaData = .2 + .8 * scatSolNorm;
+% just raw
+scat.AlphaData = scatSolNorm;
 
 figure
 plot(s_array, u_array, '-o');
